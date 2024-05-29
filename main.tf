@@ -863,7 +863,7 @@ resource "aws_security_group_rule" "this" {
 ################################################################################
 
 resource "aws_route53_record" "this" {
-  for_each = { for k, v in var.route53_records : k => v if var.create }
+  for_each = { for k, v in var.route53_records : k => v if var.create_lb }
 
   zone_id = each.value.zone_id
   name    = try(each.value.name, each.key)

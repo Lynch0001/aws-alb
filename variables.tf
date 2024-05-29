@@ -271,3 +271,13 @@ variable "autoscaling_groups" {
   type        = list(string)
   default     = null
 }
+
+################################################################################
+# Route53 Record(s)
+################################################################################
+
+variable "route53_records" {
+  description = "Map of Route53 records to create. Each record map should contain `zone_id`, `name`, and `type`"
+  type        = any
+  default     = {}
+}

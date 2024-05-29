@@ -857,3 +857,21 @@ resource "aws_security_group_rule" "this" {
   self                     = lookup(each.value, "self", null)
   source_security_group_id = lookup(each.value, "source_security_group_id", null)
 }
+
+################################################################################
+# Route53 Record(s)
+################################################################################
+
+resource "aws_route53_record" "this" {
+  for_each = { for k, v in var.route53_records : k => v if var.create }
+
+  zone_id = each.value.zone_id
+  name    = try(each.value.name, each.key)
+  type    = each.value.type
+
+  alias {
+    name                   = aws_lb.this[0].dns_name
+    zone_id                = aws_lb.this[0].zone_id
+    evaluate_target_health = true
+  }
+}

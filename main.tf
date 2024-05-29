@@ -171,6 +171,17 @@ resource "aws_lb_target_group_attachment" "this" {
   depends_on = [aws_lambda_permission.lb]
 }
 
+resource "aws_lb_target_group_attachment" "additional" {
+for_each = { for k, v in var.additional_target_group_attachments : k => v if local.create_lb }
+
+target_group_arn  = aws_lb_target_group.main[each.value.tg_index].arn
+target_id         = each.value.target_id
+port              = try(each.value.target_type, null) == "lambda" ? null : try(each.value.port, var.default_port)
+availability_zone = try(each.value.availability_zone, null)
+
+depends_on = [aws_lambda_permission.this]
+}
+
 
 resource "aws_autoscaling_attachment" "asg1" {
   for_each = { for k, v in var.target_groups : k => v if var.attach_asg }

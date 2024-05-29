@@ -874,4 +874,7 @@ resource "aws_route53_record" "this" {
     zone_id                = aws_lb.this[0].zone_id
     evaluate_target_health = true
   }
+  depends_on = [
+    aws_lb.this
+  ]
 }

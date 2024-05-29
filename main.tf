@@ -172,13 +172,26 @@ resource "aws_lb_target_group_attachment" "this" {
 }
 
 
-resource "aws_autoscaling_attachment" "target" {
+resource "aws_autoscaling_attachment" "asg1" {
   for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
 
-  autoscaling_group_name = var.autoscaling_group_name
+  autoscaling_group_name = var.autoscaling_groups[0]
   lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
 }
 
+resource "aws_autoscaling_attachment" "asg2" {
+  for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
+
+  autoscaling_group_name = var.autoscaling_groups[1]
+  lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
+}
+
+resource "aws_autoscaling_attachment" "asg3" {
+  for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
+
+  autoscaling_group_name = var.autoscaling_groups[2]
+  lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
+}
 
 resource "aws_lb_listener_rule" "https_listener_rule" {
   count = local.create_lb ? length(var.https_listener_rules) : 0

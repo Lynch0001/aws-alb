@@ -266,8 +266,8 @@ variable "attach_asg" {
   default     = true
 }
 
-variable "autoscaling_group_name" {
-  description = "ASG name"
-  type        = string
+variable "autoscaling_groups" {
+  description = "List of ASG ids"
+  type        = list(string)
   default     = null
 }

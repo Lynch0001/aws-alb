@@ -259,3 +259,15 @@ variable "security_group_tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "attach_asg" {
+  description = "Whether to attach ASG"
+  type        = bool
+  default     = true
+}
+
+variable "autoscaling_group_name" {
+  description = "ASG name"
+  type        = string
+  default     = null
+}

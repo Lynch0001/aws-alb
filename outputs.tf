@@ -83,5 +83,5 @@ output "security_group_id" {
 
 output "test" {
   description = "test asg input"
-  value       = try(data.asg_attach_data)
+  value       = try(local.asg_attach_data)
 }

@@ -78,10 +78,10 @@ output "security_group_id" {
 }
 
 ################################################################################
-# Security Group
+# Test
 ################################################################################
 
 output "test" {
-  description = "test asg input"
+  description = "test asg attach input"
   value       = try(local.asg_attach_data)
 }

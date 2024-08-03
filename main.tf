@@ -196,10 +196,10 @@ availability_zone = try(each.value.availability_zone, null)
 }
 
 resource "aws_autoscaling_attachment" "asg" {
-  for_each  = { for entry in local.asg_attach_data: "${entry.autoscaling_group}.${entry.target_group}" => entry if var.attach_asg}
+  for_each  = { for entry in local.asg_attach_data: "${entry.autoscaling_gp}.${entry.target_gp}" => entry if var.attach_asg}
 
-  autoscaling_group_name = each.value.autoscaling_group.id
-  lb_target_group_arn   = aws_lb_target_group.main[each.value.target_group.tg_index].arn
+  autoscaling_group_name = each.value.autoscaling_gp.id
+  lb_target_group_arn   = aws_lb_target_group.main[each.value.target_gp.tg_index].arn
 
 }
 

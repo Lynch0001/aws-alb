@@ -6,9 +6,5 @@ terraform {
       source  = "hashicorp/aws"
       version = "= 4.56"
     }
-    asg = {
-      source  = "hashicorp/asg"
-      version = "= 4.56"
-    }
   }
 }

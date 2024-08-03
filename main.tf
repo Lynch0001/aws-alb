@@ -181,25 +181,30 @@ availability_zone = try(each.value.availability_zone, null)
 
 }
 
+data "asg_attach_data" "data" {
+  # Nested loop over both lists, and flatten the result.
+  attach_data = distinct(flatten([
+  for autoscaling_group_name in var.autoscaling_groups : [
+  for tg in var.target_groups : {
+    autoscaling_group_name = autoscaling_group_name
+    target_group  = aws_lb_target_group
+  }
+  ]
+  ])
+  )
+}
+
+
 resource "aws_autoscaling_attachment" "asg1" {
   for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
+  #  for_each      = { for entry in asg_attach_data.data: "${entry.autoscaling_group_name}.${entry.target_group}" => entry }
+
+  #  autoscaling_group_name = each.value.autoscaling_group_name
+  #  lb_target_group_arn   = aws_lb_target_group.main[each.key.target_group].arn
 
   autoscaling_group_name = var.autoscaling_groups[0]
   lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
-}
 
-resource "aws_autoscaling_attachment" "asg2" {
-  for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
-
-  autoscaling_group_name = var.autoscaling_groups[1]
-  lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
-}
-
-resource "aws_autoscaling_attachment" "asg3" {
-  for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
-
-  autoscaling_group_name = var.autoscaling_groups[2]
-  lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
 }
 
 resource "aws_lb_listener_rule" "https_listener_rule" {

@@ -197,7 +197,7 @@ resource "aws_autoscaling_attachment" "asg_attach" {
   for_each      = { for entry in local.asg_attach_data: "${entry.autoscaling_group_name}.${entry.target_group}" => entry }
 
   autoscaling_group_name = each.value.autoscaling_group_name
-  lb_target_group_arn   = aws_lb_target_group.main[each.key.target_group].arn
+  lb_target_group_arn   = aws_lb_target_group.main[each.value.target_group.tg_index].arn
 
   #autoscaling_group_name = var.autoscaling_groups[0]
   #lb_target_group_arn   = aws_lb_target_group.main[each.key].arn

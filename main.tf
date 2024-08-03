@@ -140,8 +140,8 @@ locals {
   asg_attach_data = distinct(flatten([
   for autoscaling_gp in var.autoscaling_groups : [
   for target_gp in var.target_groups : {
-    autoscaling_gp = autoscaling_gp
-    target_gp  = target_gp
+    autoscaling_gp = autoscaling_gp.id
+    target_gp  = target_gp.index
     aws_region = var.aws_region
   }
   ]

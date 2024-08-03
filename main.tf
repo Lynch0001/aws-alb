@@ -193,15 +193,10 @@ availability_zone = try(each.value.availability_zone, null)
 
 
 resource "aws_autoscaling_attachment" "asg_attach" {
-  #for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
-  for_each      = { for entry in local.asg_attach_data: "${entry.autoscaling_group_name}.${entry.target_group}" => entry }
+  for_each      = { for entry in local.asg_attach_data: "${entry.autoscaling_group_name}.${entry.target_group}" => entry if var.attach_asg }
 
   autoscaling_group_name = each.value.autoscaling_group_name
   lb_target_group_arn   = aws_lb_target_group.main[each.value.target_group.tg_index].arn
-
-  #autoscaling_group_name = var.autoscaling_groups[0]
-  #lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
-
 }
 
 resource "aws_lb_listener_rule" "https_listener_rule" {

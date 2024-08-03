@@ -192,15 +192,15 @@ availability_zone = try(each.value.availability_zone, null)
 }
 
 
-resource "aws_autoscaling_attachment" "asg1" {
-  for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
-  #  for_each      = { for entry in attach_data.data: "${entry.autoscaling_group_name}.${entry.target_group}" => entry }
+resource "aws_autoscaling_attachment" "asg_attach" {
+  #for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
+  for_each      = { for entry in local.asg_attach_data: "${entry.autoscaling_group_name}.${entry.target_group}" => entry }
 
-  #  autoscaling_group_name = each.value.autoscaling_group_name
-  #  lb_target_group_arn   = aws_lb_target_group.main[each.key.target_group].arn
+  autoscaling_group_name = each.value.autoscaling_group_name
+  lb_target_group_arn   = aws_lb_target_group.main[each.key.target_group].arn
 
-  autoscaling_group_name = var.autoscaling_groups[0]
-  lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
+  #autoscaling_group_name = var.autoscaling_groups[0]
+  #lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
 
 }
 

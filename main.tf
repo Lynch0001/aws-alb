@@ -137,14 +137,7 @@ locals {
     ]
   ])...)
 
-  asg_attach_data = distinct(flatten([
-      for autoscaling_group in var.autoscaling_groups : [
-      for target_group in local.target_group_attachments : {
-          autoscaling_group = autoscaling_group
-          target_group  = target_group
-      }
-    ]
-  ])...)
+  asg_is_long = length(var.autoscaling_groups) == 3 ? true : false
 
   # Filter out the attachments for lambda functions. The ALB target group needs permission to forward a request on to
   # the specified lambda function. This filtered list is used to create those permission resources
@@ -192,7 +185,7 @@ availability_zone = try(each.value.availability_zone, null)
 
 
 
-if length(var.autoscaling_groups)==3{
+if local.asg_is_long {
 
   resource "aws_autoscaling_attachment" "asg1" {
   for_each = {for k, v in var.target_groups : k => v if var.attach_asg}

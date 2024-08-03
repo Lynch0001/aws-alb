@@ -287,3 +287,8 @@ variable "route53_records" {
   type        = any
   default     = {}
 }
+
+variable "aws_region" {
+  type    = string
+  default = ""
+}

@@ -181,19 +181,6 @@ availability_zone = try(each.value.availability_zone, null)
 
 }
 
-data "asg_attach_data" "data" {
-  # Nested loop over both lists, and flatten the result.
-  attach_data = distinct(flatten([
-  for autoscaling_group_name in var.autoscaling_groups : [
-  for tg in var.target_groups : {
-    autoscaling_group_name = autoscaling_group_name
-    target_group  = aws_lb_target_group
-  }
-  ]
-  ])
-  )
-}
-
 
 resource "aws_autoscaling_attachment" "asg1" {
   for_each = { for k, v in var.target_groups : k => v if var.attach_asg }

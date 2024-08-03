@@ -138,14 +138,13 @@ locals {
   ])...)
 
   asg_attach_data = distinct(flatten([
-  for autoscaling_group in var.autoscaling_groups : [
-  for target_group in local.target_group_attachments : {
-    autoscaling_group = autoscaling_group
-    target_group  = target_group
-  }
-  ]
-  ])
-  )
+      for autoscaling_group in var.autoscaling_groups : [
+      for target_group in local.target_group_attachments : {
+          autoscaling_group = autoscaling_group
+          target_group  = target_group
+      }
+    ]
+  ])...)
 
   # Filter out the attachments for lambda functions. The ALB target group needs permission to forward a request on to
   # the specified lambda function. This filtered list is used to create those permission resources
@@ -196,7 +195,7 @@ resource "aws_autoscaling_attachment" "asg_attach" {
   for_each      = { for entry in local.asg_attach_data: "${entry.autoscaling_group}.${entry.target_group}" => entry if var.attach_asg }
 
   autoscaling_group_name = each.value.autoscaling_group.id
-  lb_target_group_arn   = aws_lb_target_group.main[each.value.target_group.tg_index].arn
+  lb_target_group_arn   = aws_lb_target_group.main[each.value.target_group.index].arn
 }
 
 resource "aws_lb_listener_rule" "https_listener_rule" {

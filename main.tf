@@ -138,9 +138,9 @@ locals {
   ])...)
 
   asg_attach_data = distinct(flatten([
-  for autoscaling_group_name in var.autoscaling_groups : [
+  for autoscaling_group in var.autoscaling_groups : [
   for target_group in local.target_group_attachments : {
-    autoscaling_group_name = autoscaling_group_name
+    autoscaling_group = autoscaling_group
     target_group  = target_group
   }
   ]
@@ -193,9 +193,9 @@ availability_zone = try(each.value.availability_zone, null)
 
 
 resource "aws_autoscaling_attachment" "asg_attach" {
-  for_each      = { for entry in local.asg_attach_data: "${entry.autoscaling_group_name}.${entry.target_group}" => entry if var.attach_asg }
+  for_each      = { for entry in local.asg_attach_data: "${entry.autoscaling_group}.${entry.target_group}" => entry if var.attach_asg }
 
-  autoscaling_group_name = each.value.autoscaling_group_name
+  autoscaling_group_name = each.value.autoscaling_group
   lb_target_group_arn   = aws_lb_target_group.main[each.value.target_group.tg_index].arn
 }
 

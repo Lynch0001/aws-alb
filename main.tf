@@ -137,18 +137,6 @@ locals {
     ]
   ])...)
 
-  asg_attach_data = distinct(flatten([
-  for autoscaling_gp in var.autoscaling_groups : [
-  for target_gp in local.target_group_attachments : {
-    autoscaling_gp = autoscaling_gp
-    target_gp  = target_gp
-    aws_region = var.aws_region
-  }
-  ]
-
-  ])
-  )
-
   asg_is_long = length(var.autoscaling_groups) == 3 ? true : false
 
   # Filter out the attachments for lambda functions. The ALB target group needs permission to forward a request on to
@@ -192,6 +180,22 @@ target_group_arn  = aws_lb_target_group.main[each.value.tg_index].arn
 target_id         = each.value.target_id
 port              = each.value.port
 availability_zone = try(each.value.availability_zone, null)
+
+}
+
+variable "asg_attach_data" {
+  # Nested loop over both lists, and flatten the result.
+  asg_attach_data = distinct(flatten([
+  for autoscaling_gp in var.autoscaling_groups : [
+  for target_gp in local.target_group_attachments : {
+    autoscaling_gp = autoscaling_gp
+    target_gp  = target_gp
+    aws_region = var.aws_region
+  }
+  ]
+
+  ])
+  )
 
 }
 

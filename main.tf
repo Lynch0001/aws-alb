@@ -137,6 +137,16 @@ locals {
     ]
   ])...)
 
+  asg_attach_data = distinct(flatten([
+  for autoscaling_group_name in var.autoscaling_groups : [
+  for target_group in local.target_group_attachments : {
+    autoscaling_group_name = autoscaling_group_name
+    target_group  = target_group
+  }
+  ]
+  ])
+  )
+
   # Filter out the attachments for lambda functions. The ALB target group needs permission to forward a request on to
   # the specified lambda function. This filtered list is used to create those permission resources
   target_group_attachments_lambda = {
@@ -179,19 +189,6 @@ target_id         = each.value.target_id
 port              = each.value.port
 availability_zone = try(each.value.availability_zone, null)
 
-}
-
-data "attach_data" "data" {
-  # Nested loop over both lists, and flatten the result.
-  attach_data = distinct(flatten([
-  for autoscaling_group_name in var.autoscaling_groups : [
-  for tg in var.target_groups : {
-    autoscaling_group_name = autoscaling_group_name
-    target_group  = aws_lb_target_group
-  }
-  ]
-  ])
-  )
 }
 
 

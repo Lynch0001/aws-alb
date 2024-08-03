@@ -184,9 +184,9 @@ availability_zone = try(each.value.availability_zone, null)
 data "asg_attach_data" "data" {
   # Nested loop over both lists, and flatten the result.
   attach_data = distinct(flatten([
-  for asg in var.autoscaling_groups : [
+  for autoscaling_group_name in var.autoscaling_groups : [
   for tg in var.target_groups : {
-    autoscaling_group = autoscaling_group_name
+    autoscaling_group_name = autoscaling_group_name
     target_group  = aws_lb_target_group
   }
   ]
@@ -195,11 +195,11 @@ data "asg_attach_data" "data" {
 }
 
 
-resource "aws_autoscaling_attachment" "asg" {
+resource "aws_autoscaling_attachment" "example" {
 #  for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
-  for_each      = { for entry in asg_attach_data.data: "${entry.autoscaling_group}.${entry.target_group}" => entry }
+  for_each      = { for entry in asg_attach_data.data: "${entry.autoscaling_group_name}.${entry.target_group}" => entry }
 
-  autoscaling_group_name = each.value.autoscaling_group
+  autoscaling_group_name = each.value.autoscaling_group_name
   lb_target_group_arn   = aws_lb_target_group.main[each.key.target_group].arn
 
 #  autoscaling_group_name = var.autoscaling_groups[0]

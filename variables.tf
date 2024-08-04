@@ -290,5 +290,5 @@ variable "route53_records" {
 
 variable "aws_region" {
   type    = string
-  default = ""
+  default = "us-east-1"
 }

@@ -76,12 +76,3 @@ output "security_group_id" {
   description = "ID of the security group"
   value       = try(aws_security_group.this[0].id, null)
 }
-
-################################################################################
-# Test
-################################################################################
-
-output "test" {
-  description = "test asg attach input"
-  value       = try(var.asg_attach_data)
-}

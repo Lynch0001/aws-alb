@@ -183,29 +183,26 @@ availability_zone = try(each.value.availability_zone, null)
 
 }
 
-variable "asg_attach_data" {
-  # Nested loop over both lists, and flatten the result.
-  content = distinct(flatten([
-  for autoscaling_gp in var.autoscaling_groups : [
-  for target_gp in local.target_group_attachments : {
-    autoscaling_gp = autoscaling_gp
-    target_gp  = target_gp
-    aws_region = var.aws_region
-  }
-  ]
+resource "aws_autoscaling_attachment" "asg1" {
+  for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
 
-  ])
-  )
-
+  autoscaling_group_name = var.autoscaling_groups[0]
+  lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
 }
 
-#resource "aws_autoscaling_attachment" "asg" {
-#  for_each  = { for entry in local.asg_attach_data: "${entry.autoscaling_gp}.${entry.target_gp.name}" => entry if var.attach_asg}
-#
-#  autoscaling_group_name = each.value.autoscaling_gp
-#  lb_target_group_arn   = aws_lb_target_group.main[each.value.target_gp].arn
-#
-#}
+resource "aws_autoscaling_attachment" "asg2" {
+  for_each = { for k, v in var.target_groups : k => v if var.attach_asg }
+
+  autoscaling_group_name = var.autoscaling_groups[1]
+  lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
+}
+
+resource "aws_autoscaling_attachment" "asg3" {
+  for_each = { for k, v in var.target_groups : k => v if var.attach_asg && var.aws_region == "us-east-1"}
+
+  autoscaling_group_name = var.autoscaling_groups[2]
+  lb_target_group_arn   = aws_lb_target_group.main[each.key].arn
+}
 
 resource "aws_lb_listener_rule" "https_listener_rule" {
   count = local.create_lb ? length(var.https_listener_rules) : 0

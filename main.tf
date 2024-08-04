@@ -185,7 +185,7 @@ availability_zone = try(each.value.availability_zone, null)
 
 variable "asg_attach_data" {
   # Nested loop over both lists, and flatten the result.
-  distinct(flatten([
+  content = distinct(flatten([
   for autoscaling_gp in var.autoscaling_groups : [
   for target_gp in local.target_group_attachments : {
     autoscaling_gp = autoscaling_gp

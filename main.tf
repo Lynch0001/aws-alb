@@ -137,8 +137,6 @@ locals {
     ]
   ])...)
 
-  asg_is_long = length(var.autoscaling_groups) == 3 ? true : false
-
   # Filter out the attachments for lambda functions. The ALB target group needs permission to forward a request on to
   # the specified lambda function. This filtered list is used to create those permission resources
   target_group_attachments_lambda = {
